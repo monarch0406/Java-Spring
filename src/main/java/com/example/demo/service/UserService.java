@@ -1,13 +1,18 @@
 package com.example.demo.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.HibernateException;
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.entity.User;
 import com.example.demo.respository.UserRepository;
 import java.util.Optional;
+import org.hibernate.Session;
 
 
 @Service
@@ -17,8 +22,30 @@ public class UserService {
     private UserRepository userRepository;
 
     // 取得所有使用者
+    @SuppressWarnings({ "deprecation", "unchecked" })
     public List<User> getAllUser(){
-        return userRepository.findAll();
+        // return userRepository.findAll();
+        SessionFactory sessionFactory = new Configuration()
+            .configure("hibernate.cfg.xml")
+            .addAnnotatedClass(User.class)
+            .buildSessionFactory();
+
+        Session session = sessionFactory.openSession();
+
+        List<User> users = new ArrayList<>();
+
+        try {
+            session.beginTransaction();
+            users = session.createQuery("from User").list();
+            session.getTransaction().commit();
+        } catch (HibernateException e) {
+            e.printStackTrace();
+        } finally {
+            session.close();
+            sessionFactory.close();
+        }
+
+        return users;
     }
 
     // 取得單一使用者

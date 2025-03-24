@@ -15,7 +15,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.entity.User;
 import com.example.demo.service.UserService;
+
+import io.swagger.v3.oas.annotations.Operation;
+
 import java.util.Optional;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 
 @RestController
@@ -24,8 +28,12 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    // 取得所有使用者
     @GetMapping
+    @Operation(summary="Get all users", responses={
+        @ApiResponse(responseCode="200", description="Successfully retrieved users")
+    })
+
+    // 取得所有使用者
     public List<User> getUsers(){
         return userService.getAllUser();
     }
