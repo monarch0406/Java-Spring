@@ -29,6 +29,7 @@ public class UserController {
     private UserService userService;
 
     @GetMapping
+    // 增加Swagger API文件
     @Operation(summary="Get all users", responses={
         @ApiResponse(responseCode="200", description="Successfully retrieved users")
     })
