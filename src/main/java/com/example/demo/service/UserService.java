@@ -1,51 +1,27 @@
 package com.example.demo.service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-import org.hibernate.HibernateException;
-import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.entity.User;
+import com.example.demo.entity.Department;
 import com.example.demo.respository.UserRepository;
-import java.util.Optional;
-import org.hibernate.Session;
-
+import com.example.demo.respository.DepartmentRepository;
 
 @Service
 public class UserService {
-    
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private DepartmentRepository departmentRepository;
+
     // 取得所有使用者
-    @SuppressWarnings({ "deprecation", "unchecked" })
     public List<User> getAllUser(){
-        // return userRepository.findAll();
-        SessionFactory sessionFactory = new Configuration()
-            .configure("hibernate.cfg.xml")
-            .addAnnotatedClass(User.class)
-            .buildSessionFactory();
-
-        Session session = sessionFactory.openSession();
-
-        List<User> users = new ArrayList<>();
-
-        try {
-            session.beginTransaction();
-            users = session.createQuery("from User").list();
-            session.getTransaction().commit();
-        } catch (HibernateException e) {
-            e.printStackTrace();
-        } finally {
-            session.close();
-            sessionFactory.close();
-        }
-
-        return users;
+        return userRepository.findAll();
     }
 
     // 取得單一使用者
@@ -55,21 +31,41 @@ public class UserService {
 
     // 新增使用者
     public User createUser(User user){
+        // 先用 departmentName 找 Department，若無則建立
+        String deptName = user.getDepartment().getDepartmentName();
+        Department department = departmentRepository.findByDepartmentName(deptName)
+            .orElseGet(() -> {
+                Department newDept = new Department();
+                newDept.setDepartmentName(deptName);
+                return departmentRepository.save(newDept);
+            });
+
+        // 關聯回 user
+        user.setDepartment(department);
         return userRepository.save(user);
     }
 
     // 更新使用者
     public User updateUser(Long id, User updateUser){
-        User user = userRepository.findById(id).orElse(null);
-        if (user == null){
-            return null;
-        }
-        user.setUsername(updateUser.getUsername());
-        user.setEmail(updateUser.getEmail());    
-        user.setFirstname(updateUser.getFirstname());
-        user.setLastname(updateUser.getLastname());
-        user.setDepartmentId(updateUser.getDepartmentId()); // ✅ 新增這一行，確保 departmentId 也能更新
-        return userRepository.save(user);
+        return userRepository.findById(id).map(user -> {
+            // 同樣處理部門
+            String deptName = updateUser.getDepartment().getDepartmentName();
+            Department department = departmentRepository.findByDepartmentName(deptName)
+                .orElseGet(() -> {
+                    Department newDept = new Department();
+                    newDept.setDepartmentName(deptName);
+                    return departmentRepository.save(newDept);
+                });
+
+            // 更新其他欄位
+            user.setUsername(updateUser.getUsername());
+            user.setEmail(updateUser.getEmail());
+            user.setFirstname(updateUser.getFirstname());
+            user.setLastname(updateUser.getLastname());
+            user.setDepartment(department);
+
+            return userRepository.save(user);
+        }).orElse(null);
     }
 
     // 刪除使用者
@@ -80,3 +76,5 @@ public class UserService {
         }).orElse(false);
     }
 }
+
+

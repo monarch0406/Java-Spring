@@ -1,284 +1,421 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Management</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 20px;
-            text-align: center;
-        }
-        h1 {
-            color: #333;
-        }
-        button {
-            background-color: #007BFF;
-            color: white;
-            border: none;
-            padding: 10px 16px;
-            margin: 5px;
-            font-size: 14px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        .delete-btn {
-            background-color: red;
-        }
-        .delete-btn:hover {
-            background-color: darkred;
-        }
-
-        /* Modal 樣式 */
-        .modal {
-            display: none; 
-            position: fixed;
-            z-index: 1;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-        }
-        .modal-content {
-            background-color: white;
-            margin: 10% auto;
-            padding: 20px;
-            border-radius: 10px;
-            width: 30%;
-            text-align: left;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-        }
-        .modal-content h3 {
-            text-align: center;
-            margin-bottom: 15px;
-        }
-        .modal-content label {
-            display: block;
-            font-weight: bold;
-            margin-top: 10px;
-        }
-        .modal-content input {
-            width: 100%;
-            padding: 8px;
-            margin-top: 5px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        .modal-content .button-container {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 15px;
-        }
-        .modal-content button {
-            flex: 1;
-            padding: 10px;
-            border-radius: 5px;
-            border: none;
-            font-size: 16px;
-        }
-        .modal-content .save-btn {
-            background-color: #007BFF;
-            color: white;
-            margin-right: 5px;
-        }
-        .modal-content .cancel-btn {
-            background-color: #DC3545;
-            color: white;
-            margin-left: 5px;
-        }
-        .modal-content .close {
-            color: red;
-            float: right;
-            font-size: 24px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        /* 表格樣式 */
-        table {
-            width: 70%;
-            margin: 20px auto;
-            border-collapse: collapse;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-        }
-        thead {
-            background-color: #007BFF;
-            color: white;
-        }
-        th, td {
-            padding: 10px;
-            border: 1px solid #ddd;
-            text-align: center;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>User Management</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+    }
+    h1 {
+      color: #333;
+    }
+    button {
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      margin: 5px;
+      font-size: 14px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    .delete-btn {
+      background-color: red;
+    }
+    .delete-btn:hover {
+      background-color: darkred;
+    }
+    /* Modal 樣式 */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(0,0,0,0.5);
+    }
+    .modal-content {
+      background-color: white;
+      margin: 10% auto;
+      padding: 20px;
+      border-radius: 10px;
+      width: 30%;
+      text-align: left;
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    }
+    .modal-content h3 {
+      text-align: center;
+      margin-bottom: 15px;
+    }
+    .modal-content label {
+      display: block;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+    .modal-content input, .modal-content select {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    .modal-content .button-container {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 15px;
+    }
+    .modal-content button {
+      flex: 1;
+      padding: 10px;
+      border-radius: 5px;
+      border: none;
+      font-size: 16px;
+    }
+    .modal-content .save-btn {
+      background-color: #007BFF;
+      color: white;
+      margin-right: 5px;
+    }
+    .modal-content .cancel-btn {
+      background-color: #DC3545;
+      color: white;
+      margin-left: 5px;
+    }
+    .modal-content .close {
+      color: red;
+      float: right;
+      font-size: 24px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    /* 表格樣式 */
+    table {
+      width: 70%;
+      margin: 20px auto;
+      border-collapse: collapse;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    }
+    thead {
+      background-color: #007BFF;
+      color: white;
+    }
+    th, td {
+      padding: 10px;
+      border: 1px solid #ddd;
+      text-align: center;
+    }
+  </style>
 </head>
 <body>
 
-    <h1>User Management</h1>
+  <h1>User Management</h1>
 
-    <button onclick="openCreateModal()">Create User</button>
-    <button onclick="loadUsers()">Reload Users</button>
+  <button onclick="openCreateModal()">Create User</button>
+  <button onclick="loadUsers()">Reload Users</button>
 
-    <!-- Create / Edit User Modal -->
-    <div id="userModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <h3 id="formTitle">Create User</h3>
-            <input type="hidden" id="userId">  <!-- 隱藏 ID -->
-            
-            <label>Username:</label>
-            <input type="text" id="username" required>
-            
-            <label>Email:</label>
-            <input type="email" id="email" required>
-            
-            <label>First Name:</label>
-            <input type="text" id="firstname" required>
-            
-            <label>Last Name:</label>
-            <input type="text" id="lastname" required>
-            
-            <label>Department ID:</label>
-            <input type="number" id="departmentId" required>
-            
-            <div class="button-container">
-                <button class="save-btn" onclick="saveUser()">Save</button>
-                <button class="cancel-btn" onclick="closeModal()">Cancel</button>
-            </div>
-        </div>
+  <!-- Create / Edit User Modal -->
+  <div id="userModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <h3 id="formTitle">Create User</h3>
+      <input type="hidden" id="userId"/>
+
+      <label>Username:</label>
+      <input type="text" id="username" required />
+
+      <label>Email:</label>
+      <input type="email" id="email" required />
+
+      <label>First Name:</label>
+      <input type="text" id="firstname" required />
+
+      <label>Last Name:</label>
+      <input type="text" id="lastname" required />
+
+      <label>Department:</label>
+      <select id="departmentId" required onchange="onDepartmentChange()">
+        <option value="">Select Department</option>
+        <!-- 這裡最後會加一個 "__new__" 的選項 -->
+      </select>
+
+      <!-- 新部門名稱輸入框 (預設隱藏) -->
+      <div id="newDeptContainer" style="display: none; margin-top: 5px;">
+        <label>New Department Name:</label>
+        <input type="text" id="newDepartmentName" placeholder="Enter new department name"/>
+      </div>
+
+      <div class="button-container">
+        <button class="save-btn" onclick="saveUser()">Save</button>
+        <button class="cancel-btn" onclick="closeModal()">Cancel</button>
+      </div>
     </div>
+  </div>
 
-    <table>
-        <thead>
-            <tr>
-                <th>Username</th>
-                <th>Email</th>
-                <th>Name</th>
-                <th>Department ID</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- JavaScript 會填入使用者列表 -->
-        </tbody>
-    </table>
+  <!-- 使用者清單表格 -->
+  <table>
+    <thead>
+      <tr>
+        <th>Username</th>
+        <th>Email</th>
+        <th>Name</th>
+        <th>Department</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
 
-    <script>
-        async function loadUsers() {
-            try {
-                const response = await fetch('/users');
-                const users = await response.json();
-    
-                const userTable = document.querySelector("tbody");
-                userTable.innerHTML = '';
-    
-                users.forEach(user => {
-                    const row = document.createElement("tr");
-                    row.dataset.id = user.id;
-                    row.innerHTML = `
-                        <td>${user.username}</td>
-                        <td>${user.email}</td>
-                        <td>${user.firstname} ${user.lastname}</td>
-                        <td>${user.departmentId ?? "N/A"}</td>
-                        <td>
-                            <button onclick="editUser(this)">Edit</button>
-                            <button class="delete-btn" onclick="deleteUser(this)">Delete</button>
-                        </td>
-                    `;
-                    userTable.appendChild(row);
-                });
-    
-            } catch (error) {
-                console.error("Error fetching users:", error);
-            }
-        }
-    
-        function openCreateModal() {
-            document.getElementById("formTitle").innerText = "Create User";
-            document.getElementById("userId").value = "";  
-            document.getElementById("username").value = "";
-            document.getElementById("email").value = "";
-            document.getElementById("firstname").value = "";
-            document.getElementById("lastname").value = "";
-            document.getElementById("departmentId").value = "";
-            document.getElementById("userModal").style.display = "block";
-        }
-    
-        // 新增的 editUser 函式
-        function editUser(button) {
-            const tr = button.closest("tr");
-            const id = tr.dataset.id;
-    
-            // 你可以從表格中直接取得文字，或是根據實際情況從後端再撈一次
-            const username = tr.children[0].innerText;
-            const email = tr.children[1].innerText;
-            // 這裡假設 firstname 和 lastname 是拆開來存的話，你可能要調整一下做法
-            // 或者像目前範例一樣是以空格區分
-            const nameParts = tr.children[2].innerText.split(" ");
-            const departmentId = tr.children[3].innerText === "N/A" ? "" : tr.children[3].innerText;
-    
-            // 設定表單資料
-            document.getElementById("formTitle").innerText = "Edit User";
-            document.getElementById("userId").value = id;
-            document.getElementById("username").value = username;
-            document.getElementById("email").value = email;
-            document.getElementById("firstname").value = nameParts[0] || "";
-            document.getElementById("lastname").value = nameParts[1] || "";
-            document.getElementById("departmentId").value = departmentId;
-    
-            // 顯示 Modal
-            document.getElementById("userModal").style.display = "block";
-        }
-    
-        async function saveUser() {
-            const id = document.getElementById("userId").value;
-            const user = {
-                username: document.getElementById("username").value,
-                email: document.getElementById("email").value,
-                firstname: document.getElementById("firstname").value,
-                lastname: document.getElementById("lastname").value,
-                departmentId: document.getElementById("departmentId").value
-            };
-    
-            const method = id ? "PUT" : "POST";
-            const url = id ? `/users/${id}` : "/users";
-    
-            await fetch(url, { 
-                method, 
-                headers: { "Content-Type": "application/json" }, 
-                body: JSON.stringify(user) 
-            });
-    
-            closeModal();
-            loadUsers();
-        }
-    
-        async function deleteUser(button) {
-            const id = button.closest("tr").dataset.id;
-            if (confirm("Are you sure?")) {
-                await fetch(`/users/${id}`, { method: "DELETE" });
-                button.closest("tr").remove();
-            }
-        }
-    
-        function closeModal() { 
-            document.getElementById("userModal").style.display = "none"; 
-        }
-    
-        window.onload = loadUsers;
-    </script>    
+  <script>
+    // ==========================
+    // 1) 載入使用者 (Load Users)
+    // ==========================
+    async function loadUsers() {
+      try {
+        const response = await fetch('/users');
+        const users = await response.json();
 
+        // 清空表格
+        const userTableBody = document.querySelector("tbody");
+        userTableBody.innerHTML = "";
+
+        // 將每個 user 資料放進表格
+        users.forEach(user => {
+          const row = document.createElement("tr");
+          row.dataset.id = user.id;
+
+          row.innerHTML = `
+            <td>${user.username}</td>
+            <td>${user.email}</td>
+            <td>${user.firstname} ${user.lastname}</td>
+            <td>${user.department ? user.department.departmentName : ""}</td>
+            <td>
+              <button onclick="editUser(this)">Edit</button>
+              <button class="delete-btn" onclick="deleteUser(this)">Delete</button>
+            </td>
+          `;
+
+          userTableBody.appendChild(row);
+        });
+
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      }
+    }
+
+    // ================================
+    // 2) 載入部門清單 (Load Departments)
+    // ================================
+    async function loadDepartments() {
+      try {
+        const response = await fetch('/departments');
+        const departments = await response.json();
+
+        const departmentSelect = document.getElementById("departmentId");
+        departmentSelect.innerHTML = `<option value="">Select Department</option>`;
+
+        // 用 departmentId 當 value
+        departments.forEach(dept => {
+            departmentSelect.innerHTML += `
+            <option value="${dept.departmentName}">${dept.departmentName}</option>
+          `;
+        });
+
+        // 最後加一個特殊選項: "__new__" 表示 "新增部門"
+        departmentSelect.innerHTML += `<option value="__new__">+ Add New Department</option>`;
+
+      } catch (error) {
+        console.error("Error fetching departments:", error);
+      }
+    }
+
+    // ===============================
+    // 3) 開啟「建立使用者」的彈窗
+    // ===============================
+    function openCreateModal() {
+      document.getElementById("formTitle").innerText = "Create User";
+      document.getElementById("userId").value = "";
+      document.getElementById("username").value = "";
+      document.getElementById("email").value = "";
+      document.getElementById("firstname").value = "";
+      document.getElementById("lastname").value = "";
+      document.getElementById("newDepartmentName").value = "";
+
+      // 先載入部門清單
+      loadDepartments().then(() => {
+        document.getElementById("departmentId").value = "";
+        document.getElementById("newDeptContainer").style.display = "none";
+      });
+
+      document.getElementById("userModal").style.display = "block";
+    }
+
+    // =========================================
+    // 4) 部門下拉選單的 onchange -> 顯示或隱藏「新增部門」欄位
+    // =========================================
+    function onDepartmentChange() {
+      const departmentSelect = document.getElementById("departmentId");
+      const newDeptContainer = document.getElementById("newDeptContainer");
+      if (departmentSelect.value === "__new__") {
+        newDeptContainer.style.display = "block";
+      } else {
+        newDeptContainer.style.display = "none";
+        document.getElementById("newDepartmentName").value = "";
+      }
+    }
+
+    // ===================================
+    // 5) Edit User：開啟編輯視窗並載入資料
+    // ===================================
+    async function editUser(button) {
+      const row = button.closest("tr");
+      const id = row.dataset.id;
+
+      try {
+        // 從後端取得該使用者的詳細資料
+        const response = await fetch(`/users/${id}`);
+        const user = await response.json();
+
+        // 先載入部門清單
+        await loadDepartments();
+
+        // 設定表單標題
+        document.getElementById("formTitle").innerText = "Edit User";
+
+        // 填入 user 資料
+        document.getElementById("userId").value = user.id;
+        document.getElementById("username").value = user.username;
+        document.getElementById("email").value = user.email;
+        document.getElementById("firstname").value = user.firstname;
+        document.getElementById("lastname").value = user.lastname;
+        document.getElementById("newDepartmentName").value = "";
+
+        // 選中該使用者目前的 departmentId
+        if (user.department) {
+          document.getElementById("departmentId").value = user.department.departmentId;
+        } else {
+          document.getElementById("departmentId").value = "";
+        }
+
+        // 編輯模式預設不顯示新增部門輸入框
+        document.getElementById("newDeptContainer").style.display = "none";
+
+        // 顯示 modal
+        document.getElementById("userModal").style.display = "block";
+
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    }
+
+    // ===================================
+    // 6) 新增 / 修改 使用者
+    // ===================================
+    async function saveUser() {
+        const id = document.getElementById("userId").value;
+        const username = document.getElementById("username").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const firstname = document.getElementById("firstname").value.trim();
+        const lastname = document.getElementById("lastname").value.trim();
+        
+        // 取得選到的部門
+        const departmentSelect = document.getElementById("departmentId");
+        const selectedValue = departmentSelect.value;  // 可能是 "", "__new__", 或 departmentName
+        const newDepartmentName = document.getElementById("newDepartmentName").value.trim();
+      
+        // =========== 1) 前端驗證 ===========
+      
+        // (A) 檢查基本欄位是否為空
+        if (!username || !email || !firstname || !lastname) {
+          alert("All fields are required. Please fill them out.");
+          return; // 直接中斷，使用者要補齊才行
+        }
+      
+        // (B) 檢查部門下拉是否有選擇
+        if (!selectedValue) {
+          alert("Please select a department or add a new one.");
+          return;
+        }
+      
+        // (C) 如果選了 + Add New Department，但沒有填新部門名稱
+        if (selectedValue === "__new__" && !newDepartmentName) {
+          alert("Please enter the new department name.");
+          return;
+        }
+      
+        // =========== 2) 組合要送給後端的 payload ===========
+        let userPayload = {
+          username,
+          email,
+          firstname,
+          lastname
+        };
+      
+        if (selectedValue === "__new__") {
+          // 選「+ Add New Department」，用新部門名稱
+          userPayload.department = { departmentName: newDepartmentName };
+        } else {
+          // 選舊部門
+          userPayload.department = { departmentName: selectedValue };
+        }
+      
+        // =========== 3) 送出到後端 ===========
+      
+        const method = id ? "PUT" : "POST";
+        const url = id ? `/users/${id}` : "/users";
+      
+        try {
+          await fetch(url, {
+            method,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(userPayload)
+          });
+          closeModal();
+          loadUsers(); // 重新載入使用者列表
+        } catch (error) {
+          console.error("Error saving user:", error);
+        }
+      }
+      
+
+    // ===================================
+    // 7) 刪除使用者
+    // ===================================
+    async function deleteUser(button) {
+      const row = button.closest("tr");
+      const id = row.dataset.id;
+      if (confirm("Are you sure?")) {
+        try {
+          await fetch(`/users/${id}`, { method: "DELETE" });
+          row.remove(); // 前端直接移除該列
+        } catch (error) {
+          console.error("Error deleting user:", error);
+        }
+      }
+    }
+
+    // 關閉 Modal
+    function closeModal() {
+      document.getElementById("userModal").style.display = "none";
+    }
+
+    // ===================================
+    // 頁面載入時，載入使用者 & 部門清單
+    // ===================================
+    window.onload = () => {
+      loadUsers();       // 先載入使用者
+      loadDepartments(); // 也載入部門清單 (供 Create User 時直接使用)
+    };
+  </script>
 </body>
 </html>
-
-
-
