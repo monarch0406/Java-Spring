@@ -68,6 +68,7 @@ public class UserService {
         user.setEmail(updateUser.getEmail());    
         user.setFirstname(updateUser.getFirstname());
         user.setLastname(updateUser.getLastname());
+        user.setDepartmentId(updateUser.getDepartmentId()); // ✅ 新增這一行，確保 departmentId 也能更新
         return userRepository.save(user);
     }
 

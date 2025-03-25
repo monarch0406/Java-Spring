@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+        }
+        button {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            margin: 5px;
+            font-size: 14px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .delete-btn {
+            background-color: red;
+        }
+        .delete-btn:hover {
+            background-color: darkred;
+        }
+
+        /* Modal 樣式 */
+        .modal {
+            display: none; 
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 20px;
+            border-radius: 10px;
+            width: 30%;
+            text-align: left;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        .modal-content h3 {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        .modal-content label {
+            display: block;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .modal-content input {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .modal-content .button-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+        }
+        .modal-content button {
+            flex: 1;
+            padding: 10px;
+            border-radius: 5px;
+            border: none;
+            font-size: 16px;
+        }
+        .modal-content .save-btn {
+            background-color: #007BFF;
+            color: white;
+            margin-right: 5px;
+        }
+        .modal-content .cancel-btn {
+            background-color: #DC3545;
+            color: white;
+            margin-left: 5px;
+        }
+        .modal-content .close {
+            color: red;
+            float: right;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* 表格樣式 */
+        table {
+            width: 70%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        thead {
+            background-color: #007BFF;
+            color: white;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>User Management</h1>
+
+    <button onclick="openCreateModal()">Create User</button>
+    <button onclick="loadUsers()">Reload Users</button>
+
+    <!-- Create / Edit User Modal -->
+    <div id="userModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h3 id="formTitle">Create User</h3>
+            <input type="hidden" id="userId">  <!-- 隱藏 ID -->
+            
+            <label>Username:</label>
+            <input type="text" id="username" required>
+            
+            <label>Email:</label>
+            <input type="email" id="email" required>
+            
+            <label>First Name:</label>
+            <input type="text" id="firstname" required>
+            
+            <label>Last Name:</label>
+            <input type="text" id="lastname" required>
+            
+            <label>Department ID:</label>
+            <input type="number" id="departmentId" required>
+            
+            <div class="button-container">
+                <button class="save-btn" onclick="saveUser()">Save</button>
+                <button class="cancel-btn" onclick="closeModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Name</th>
+                <th>Department ID</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- JavaScript 會填入使用者列表 -->
+        </tbody>
+    </table>
+
+    <script>
+        async function loadUsers() {
+            try {
+                const response = await fetch('/users');
+                const users = await response.json();
+    
+                const userTable = document.querySelector("tbody");
+                userTable.innerHTML = '';
+    
+                users.forEach(user => {
+                    const row = document.createElement("tr");
+                    row.dataset.id = user.id;
+                    row.innerHTML = `
+                        <td>${user.username}</td>
+                        <td>${user.email}</td>
+                        <td>${user.firstname} ${user.lastname}</td>
+                        <td>${user.departmentId ?? "N/A"}</td>
+                        <td>
+                            <button onclick="editUser(this)">Edit</button>
+                            <button class="delete-btn" onclick="deleteUser(this)">Delete</button>
+                        </td>
+                    `;
+                    userTable.appendChild(row);
+                });
+    
+            } catch (error) {
+                console.error("Error fetching users:", error);
+            }
+        }
+    
+        function openCreateModal() {
+            document.getElementById("formTitle").innerText = "Create User";
+            document.getElementById("userId").value = "";  
+            document.getElementById("username").value = "";
+            document.getElementById("email").value = "";
+            document.getElementById("firstname").value = "";
+            document.getElementById("lastname").value = "";
+            document.getElementById("departmentId").value = "";
+            document.getElementById("userModal").style.display = "block";
+        }
+    
+        // 新增的 editUser 函式
+        function editUser(button) {
+            const tr = button.closest("tr");
+            const id = tr.dataset.id;
+    
+            // 你可以從表格中直接取得文字，或是根據實際情況從後端再撈一次
+            const username = tr.children[0].innerText;
+            const email = tr.children[1].innerText;
+            // 這裡假設 firstname 和 lastname 是拆開來存的話，你可能要調整一下做法
+            // 或者像目前範例一樣是以空格區分
+            const nameParts = tr.children[2].innerText.split(" ");
+            const departmentId = tr.children[3].innerText === "N/A" ? "" : tr.children[3].innerText;
+    
+            // 設定表單資料
+            document.getElementById("formTitle").innerText = "Edit User";
+            document.getElementById("userId").value = id;
+            document.getElementById("username").value = username;
+            document.getElementById("email").value = email;
+            document.getElementById("firstname").value = nameParts[0] || "";
+            document.getElementById("lastname").value = nameParts[1] || "";
+            document.getElementById("departmentId").value = departmentId;
+    
+            // 顯示 Modal
+            document.getElementById("userModal").style.display = "block";
+        }
+    
+        async function saveUser() {
+            const id = document.getElementById("userId").value;
+            const user = {
+                username: document.getElementById("username").value,
+                email: document.getElementById("email").value,
+                firstname: document.getElementById("firstname").value,
+                lastname: document.getElementById("lastname").value,
+                departmentId: document.getElementById("departmentId").value
+            };
+    
+            const method = id ? "PUT" : "POST";
+            const url = id ? `/users/${id}` : "/users";
+    
+            await fetch(url, { 
+                method, 
+                headers: { "Content-Type": "application/json" }, 
+                body: JSON.stringify(user) 
+            });
+    
+            closeModal();
+            loadUsers();
+        }
+    
+        async function deleteUser(button) {
+            const id = button.closest("tr").dataset.id;
+            if (confirm("Are you sure?")) {
+                await fetch(`/users/${id}`, { method: "DELETE" });
+                button.closest("tr").remove();
+            }
+        }
+    
+        function closeModal() { 
+            document.getElementById("userModal").style.display = "none"; 
+        }
+    
+        window.onload = loadUsers;
+    </script>    
+
+</body>
+</html>
+
+
+

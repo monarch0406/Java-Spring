@@ -32,6 +32,9 @@ public class User {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
+    @Column(name = "department_id")  // 新增 department_id 欄位
+    private Long departmentId;
+
     public User(){
         this.createdAt=LocalDateTime.now();
     }
@@ -85,4 +88,11 @@ public class User {
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }    
+    public Long getDepartmentId() {
+        return departmentId;
+    }
+
+    public void setDepartmentId(Long departmentId) {
+        this.departmentId = departmentId;
+    }
 }
