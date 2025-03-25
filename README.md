@@ -115,49 +115,76 @@ http://localhost:8080/swagger-ui.html
 - `closeModal()`：關閉彈出視窗
 
 ### 6. 畫面範例
-#### **新增使用者**
-![Create User](src/main/resources/photo/Create_User_Step1.png)
+# 使用者管理系統 - 畫面範例
 
-#### **編輯使用者**
-![Edit User](src/main/resources/photo/Edit_User_Form.png)
+#### 1. 使用者列表
+顯示所有使用者的列表。
 
-#### **刪除使用者**
-![Delete User](src/main/resources/photo/Delete_User_Confirm.png)
-**使用者列表：**
-![0325_Result](src/main/resources/photo/0325_Full_1.png)
+![使用者列表](src/main/resources/photo/0325_Full_1.png)
 
-**Create User (彈出式表單 Modal)：**
-![0325_Result](src/main/resources/photo/0325_Full_2.png)
+#### 2. 建立使用者 (Create User)
 
-**Create User : 選擇系所(Department)：**
-![0325_Result](src/main/resources/photo/0325_Full_3.png)
+##### 2.1 開啟建立使用者表單 (彈出式視窗)
+使用者點擊按鈕後，開啟彈出式表單以填寫使用者資訊。
 
-**Create User : 創建新系所：**
-![0325_Result](src/main/resources/photo/0325_Full_4.png)
+![Create User (彈出式表單)](src/main/resources/photo/0325_Full_2.png)
 
-**創建新系所前資料庫：**
-![0325_Result](src/main/resources/photo/0325_Full_11.png)
+##### 2.2 選擇系所 (Department)
+在建立使用者時，可選擇現有的系所。
 
-**Create User : 禁止資料為空：**
-![0325_Result](src/main/resources/photo/0325_Full_5.png)
+![選擇系所](src/main/resources/photo/0325_Full_3.png)
 
-**Create User : 完成結果(1)沒有創建新系所：**
-![0325_Result](src/main/resources/photo/0325_Full_6.png)
+##### 2.3 創建新系所
+若系所未在選單內，使用者可選擇新增新系所。
 
-**Create User : 完成結果(2)創建新系所：**
-![0325_Result](src/main/resources/photo/0325_Full_12.png)
+![創建新系所](src/main/resources/photo/0325_Full_4.png)
 
-**創建新系所後資料庫：**
-![0325_Result](src/main/resources/photo/0325_Full_13.png)
+###### 創建前的資料庫狀態
+創建新系所前，系所表的原始資料內容。
 
-**Edit User : 修改表單內容：**
-![0325_Result](src/main/resources/photo/0325_Full_7.png)
+![創建新系所前資料庫](src/main/resources/photo/0325_Full_11.png)
 
-**Edit User : 修改完成結果：**
-![0325_Result](src/main/resources/photo/0325_Full_8.png)
+##### 2.4 禁止空白資料提交
+在未填寫完整資訊時，系統會阻止提交並提示錯誤。
 
-**Delete User : 刪除跳出視窗：**
-![0325_Result](src/main/resources/photo/0325_Full_9.png)
+![禁止資料為空](src/main/resources/photo/0325_Full_5.png)
 
-**Delete User : 刪除完成結果：**
-![0325_Result](src/main/resources/photo/0325_Full_10.png)
+##### 2.5 創建完成結果
+###### 2.5.1 未新增新系所
+當使用者未選擇新增系所時，提交後的結果。
+
+![創建結果(1)沒有創建新系所](src/main/resources/photo/0325_Full_6.png)
+
+###### 2.5.2 新增新系所
+當使用者選擇新增系所，提交後的結果。
+
+![創建結果(2)創建新系所](src/main/resources/photo/0325_Full_12.png)
+
+###### 創建後的資料庫狀態
+系所新增後，資料庫的更新狀態。
+
+![創建新系所後資料庫](src/main/resources/photo/0325_Full_13.png)
+
+#### 3. 編輯使用者 (Edit User)
+
+##### 3.1 修改使用者資訊
+使用者可修改已存在的使用者資料。
+
+![修改使用者表單](src/main/resources/photo/0325_Full_7.png)
+
+##### 3.2 修改完成結果
+修改提交後的更新結果。
+
+![修改完成結果](src/main/resources/photo/0325_Full_8.png)
+
+#### 4. 刪除使用者 (Delete User)
+
+##### 4.1 刪除確認視窗
+使用者點擊刪除後，系統會彈出確認視窗。
+
+![刪除跳出視窗](src/main/resources/photo/0325_Full_9.png)
+
+##### 4.2 刪除完成結果
+刪除後的最終結果。
+
+![刪除完成結果](src/main/resources/photo/0325_Full_10.png)
