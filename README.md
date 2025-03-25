@@ -69,7 +69,7 @@ http://localhost:8080/swagger-ui.html
 
 ## 0318 Hibernate + Swagger Api
 
-## 0325 HTML + CSS + Javascript 部分
+## 0325 HTML + CSS + Javascript 部分 (src\main\resources\static\user.html 的部分)
 ### 概述
 本周使用 **HTML、CSS 和 JavaScript** 開發，提供前端頁面來進行 **新增、編輯、刪除及列出使用者** 的功能。
 
