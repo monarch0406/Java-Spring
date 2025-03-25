@@ -107,7 +107,7 @@ http://localhost:8080/swagger-ui.html
 
 #### 畫面範例
 **使用者列表：**
-![0325_Result](src\main\resources\photo\0325.png)
+![0325_Result](src/main/resources/photo/0325.png)
 
 **彈出式表單 (Modal)：**
-![0325_Pop](src\main\resources\photo\0325_pop.png)
+![0325_Pop](src/main/resources/photo/0325_pop.png)
