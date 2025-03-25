@@ -69,45 +69,95 @@ http://localhost:8080/swagger-ui.html
 
 ## 0318 Hibernate + Swagger Api
 
-## 0325 HTML + CSS + Javascript 部分 (static/user.html 的部分)
-### 概述
-本周使用 **HTML、CSS 和 JavaScript** 開發，提供前端頁面來進行 **新增、編輯、刪除及列出使用者** 的功能。
+## 0325 HTML + CSS + JavaScript 部分 (static/user.html)
 
-#### 主要功能
-- **使用者列表顯示**：從後端 API 取得並顯示使用者資訊。
-- **新增使用者**：透過彈出視窗輸入使用者資料並儲存。
-- **編輯使用者**：允許修改現有使用者資訊。
-- **刪除使用者**：提供刪除按鈕，並附帶確認提示。
+### 1. 簡介
+本專案透過 **HTML、CSS 和 JavaScript** 開發，提供 **新增、編輯、刪除、列出使用者** 的前端功能，並透過 API 與後端進行互動。
 
-#### 連接後端 API（可選）
-本專案使用後端提供的 API 端點：
-- `GET /users` → 取得所有使用者
-- `POST /users` → 新增使用者
-- `PUT /users/:id` → 更新使用者資訊
-- `DELETE /users/:id` → 刪除使用者
+### 2. 使用方法
+####  伺服器啟動
+1. 啟動後端 API (確保 Spring Boot 服務已執行)
+2. 在瀏覽器輸入 `http://localhost:8080/user.html`
 
-#### 程式碼概覽
-##### 1. **HTML**
-- 主畫面包含：
-  - **新增使用者** 按鈕開啟表單。
-  - **使用者列表** 顯示後端取得的資料。
-  - **彈出視窗 (Modal)** 用於輸入或編輯使用者資訊。
+### 3. 功能概覽
+- **使用者管理**
+  - 顯示使用者列表
+  - 新增 / 編輯 / 刪除使用者
+- **系所管理**
+  - 選擇現有系所
+  - 可新增新系所
 
-##### 2. **CSS**
-- 為頁面佈局、按鈕、表格和彈出視窗提供樣式。
-- 包含懸停效果、表格樣式、彈出視窗設計。
+### 4. API 端點 (後端)
+| 方法  | 路徑          | 功能說明            |
+|------|-------------|------------------|
+| GET  | /users      | 取得所有使用者      |
+| POST | /users      | 新增使用者        |
+| PUT  | /users/:id  | 更新使用者資訊      |
+| DELETE | /users/:id | 刪除使用者        |
 
-##### 3. **JavaScript**
-- `loadUsers()`：從 API 獲取並顯示使用者列表。
-- `openCreateModal()`：開啟新增使用者的表單。
-- `editUser()`：開啟編輯使用者的表單，並填入現有資料。
-- `saveUser()`：儲存或更新使用者資訊。
-- `deleteUser()`：刪除使用者，並附帶確認提示。
-- `closeModal()`：關閉彈出視窗。
+### 5. 頁面結構
+#### (1) **HTML**
+- **使用者列表** (顯示來自 API 的資訊)
+- **按鈕**：新增 / 編輯 / 刪除
+- **彈出視窗 (Modal)** 供新增與編輯用
 
-#### 畫面範例
+#### (2) **CSS**
+- **佈局**：使用 `Flexbox` 提供響應式設計
+- **按鈕樣式**：`hover` 動畫、顏色變換
+- **彈出視窗**：`position: fixed` 控制顯示效果
+
+#### (3) **JavaScript**
+- `loadUsers()`：從 API 獲取並顯示使用者列表
+- `openCreateModal()`：開啟新增使用者表單
+- `editUser()`：編輯使用者
+- `saveUser()`：儲存或更新使用者資訊
+- `deleteUser()`：刪除使用者
+- `closeModal()`：關閉彈出視窗
+
+### 6. 畫面範例
+#### **新增使用者**
+![Create User](src/main/resources/photo/Create_User_Step1.png)
+
+#### **編輯使用者**
+![Edit User](src/main/resources/photo/Edit_User_Form.png)
+
+#### **刪除使用者**
+![Delete User](src/main/resources/photo/Delete_User_Confirm.png)
 **使用者列表：**
-![0325_Result](src/main/resources/photo/0325.png)
+![0325_Result](src/main/resources/photo/0325_Full_1.png)
 
-**彈出式表單 (Modal)：**
-![0325_Pop](src/main/resources/photo/0325_pop.png)
+**Create User (彈出式表單 Modal)：**
+![0325_Result](src/main/resources/photo/0325_Full_2.png)
+
+**Create User : 選擇系所(Department)：**
+![0325_Result](src/main/resources/photo/0325_Full_3.png)
+
+**Create User : 創建新系所：**
+![0325_Result](src/main/resources/photo/0325_Full_4.png)
+
+**創建新系所前資料庫：**
+![0325_Result](src/main/resources/photo/0325_Full_11.png)
+
+**Create User : 禁止資料為空：**
+![0325_Result](src/main/resources/photo/0325_Full_5.png)
+
+**Create User : 完成結果(1)沒有創建新系所：**
+![0325_Result](src/main/resources/photo/0325_Full_6.png)
+
+**Create User : 完成結果(2)創建新系所：**
+![0325_Result](src/main/resources/photo/0325_Full_12.png)
+
+**創建新系所後資料庫：**
+![0325_Result](src/main/resources/photo/0325_Full_13.png)
+
+**Edit User : 修改表單內容：**
+![0325_Result](src/main/resources/photo/0325_Full_7.png)
+
+**Edit User : 修改完成結果：**
+![0325_Result](src/main/resources/photo/0325_Full_8.png)
+
+**Delete User : 刪除跳出視窗：**
+![0325_Result](src/main/resources/photo/0325_Full_9.png)
+
+**Delete User : 刪除完成結果：**
+![0325_Result](src/main/resources/photo/0325_Full_10.png)
