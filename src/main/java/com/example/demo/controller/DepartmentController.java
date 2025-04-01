@@ -1,7 +1,8 @@
 package com.example.demo.controller;
 
 import com.example.demo.entity.Department;
-import com.example.demo.respository.DepartmentRepository;
+import com.example.demo.repository.DepartmentRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

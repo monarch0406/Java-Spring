@@ -7,9 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.entity.User;
+import com.example.demo.repository.DepartmentRepository;
+import com.example.demo.repository.UserRepository;
 import com.example.demo.entity.Department;
-import com.example.demo.respository.UserRepository;
-import com.example.demo.respository.DepartmentRepository;
 
 @Service
 public class UserService {
