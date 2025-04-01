@@ -48,13 +48,16 @@ public class UserService {
     // 更新使用者
     public User updateUser(Long id, User updateUser){
         return userRepository.findById(id).map(user -> {
-            // 同樣處理部門
+            // 取得原本的部門
+            Department oldDept = user.getDepartment();
+
+            // 依據更新內容找到或建立新的部門
             String deptName = updateUser.getDepartment().getDepartmentName();
-            Department department = departmentRepository.findByDepartmentName(deptName)
+            Department newDept = departmentRepository.findByDepartmentName(deptName)
                 .orElseGet(() -> {
-                    Department newDept = new Department();
-                    newDept.setDepartmentName(deptName);
-                    return departmentRepository.save(newDept);
+                    Department newDeptTemp = new Department();
+                    newDeptTemp.setDepartmentName(deptName);
+                    return departmentRepository.save(newDeptTemp);
                 });
 
             // 更新其他欄位
@@ -62,19 +65,38 @@ public class UserService {
             user.setEmail(updateUser.getEmail());
             user.setFirstname(updateUser.getFirstname());
             user.setLastname(updateUser.getLastname());
-            user.setDepartment(department);
+            user.setDepartment(newDept);
 
-            return userRepository.save(user);
+            User savedUser = userRepository.save(user);
+
+            // 如果使用者更換部門，檢查原部門是否還有其他使用者
+            if (!oldDept.equals(newDept)) {
+                if (userRepository.findByDepartment(oldDept).isEmpty()) {
+                    departmentRepository.delete(oldDept);
+                }
+            }
+
+            return savedUser;
         }).orElse(null);
     }
 
     // 刪除使用者
     public boolean deleteUser(Long id) {
-        return userRepository.findById(id).map(user -> {
+        Optional<User> optionalUser = userRepository.findById(id);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            Department dept = user.getDepartment();
             userRepository.delete(user);
+            // 檢查該部門是否還有其他使用者
+            if (userRepository.findByDepartment(dept).isEmpty()) {
+                departmentRepository.delete(dept);
+            }
             return true;
-        }).orElse(false);
+        } else {
+            return false;
+        }
     }
 }
+
 
 
