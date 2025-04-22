@@ -19,6 +19,13 @@ public class UserService {
     @Autowired
     private DepartmentRepository departmentRepository;
 
+    // 建構子注入，方便測試時傳入 mock
+    public UserService(UserRepository userRepository,
+                        DepartmentRepository departmentRepository) {
+        this.userRepository = userRepository;
+        this.departmentRepository = departmentRepository;
+    }
+
     // 取得所有使用者
     public List<User> getAllUser(){
         return userRepository.findAll();
