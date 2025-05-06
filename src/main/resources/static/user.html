@@ -176,6 +176,26 @@
     <tbody></tbody>
   </table>
 
+</table>
+
+<!--這裡放 Audit Log -->
+<div id="auditContainer" style="width:70%; margin:20px auto; display:none;">
+  <h3>Audit Details</h3>
+  <table id="auditTable" style="width:100%; border-collapse:collapse;">
+    <thead>
+      <tr style="background:#007BFF; color:#fff;">
+        <th style="padding:8px; border:1px solid #ddd;">Column Name</th>
+        <th style="padding:8px; border:1px solid #ddd;">Before Value</th>
+        <th style="padding:8px; border:1px solid #ddd;">After Value</th>
+        <th style="padding:8px; border:1px solid #ddd;">Created At</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+  <button style="margin-top:10px;" onclick="hideAudit()">Close Audit</button>
+</div>
+
+
   <script>
     // ==========================
     // 1) 載入使用者 (Load Users)
@@ -194,16 +214,17 @@
           const row = document.createElement("tr");
           row.dataset.id = user.id;
 
-          row.innerHTML = `
-            <td>${user.username}</td>
-            <td>${user.email}</td>
-            <td>${user.firstname} ${user.lastname}</td>
-            <td>${user.department ? user.department.departmentName : ""}</td>
-            <td>
-              <button onclick="editUser(this)">Edit</button>
-              <button class="delete-btn" onclick="deleteUser(this)">Delete</button>
-            </td>
-          `;
+        // loadUsers() 裡建 row.innerHTML 那段，改成：
+        row.innerHTML = `
+          <td>${user.username}</td>
+          <td>${user.email}</td>
+          <td>${user.firstname} ${user.lastname}</td>
+          <td>${user.department ? user.department.departmentName : ""}</td>
+          <td>
+            <button onclick="editUser(this)">Edit</button>
+            <button class="delete-btn" onclick="deleteUser(this)">Delete</button>
+            <button onclick="showAudit(this)">Show Audit</button>
+          </td>`;
 
           userTableBody.appendChild(row);
         });
@@ -238,6 +259,44 @@
         console.error("Error fetching departments:", error);
       }
     }
+
+    // 取得並顯示 audit log
+async function showAudit(button) {
+  const row = button.closest("tr");
+  const userId = row.dataset.id;
+
+  try {
+    const res = await fetch(`/audits/${userId}`);
+    const audits = await res.json();
+
+    const tbody = document.querySelector("#auditTable tbody");
+    tbody.innerHTML = "";  // 清空
+
+    audits.forEach(a => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td style="padding:6px; border:1px solid #ddd;">${a.columnName}</td>
+        <td style="padding:6px; border:1px solid #ddd;">${a.beforeValue || ""}</td>
+        <td style="padding:6px; border:1px solid #ddd;">${a.afterValue || ""}</td>
+        <td style="padding:6px; border:1px solid #ddd;">${new Date(a.createdAt).toLocaleString()}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    // 顯示容器
+    document.getElementById("auditContainer").style.display = "block";
+    // 滾動到 audit 區塊
+    document.getElementById("auditContainer").scrollIntoView({ behavior: "smooth" });
+
+  } catch (err) {
+    console.error("Error loading audit:", err);
+  }
+}
+
+// 關閉 audit 顯示
+function hideAudit() {
+  document.getElementById("auditContainer").style.display = "none";
+}
 
     // ===============================
     // 3) 開啟「建立使用者」的彈窗

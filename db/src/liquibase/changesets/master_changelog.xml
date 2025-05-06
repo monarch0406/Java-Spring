@@ -3,24 +3,80 @@
     xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="
-       http://www.liquibase.org/xml/ns/dbchangelog
-       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+      http://www.liquibase.org/xml/ns/dbchangelog
+      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
 
-  <changeSet id="1-create-audit-table" author="bro">
+  <!-- 1. 建 audit 表（如果已存在可跳過這段） -->
+  <changeSet id="20250507-1-create-audit" author="bro">
     <createTable tableName="audit">
-      <column name="id"           type="BIGINT" autoIncrement="true">
+      <column name="id" type="BIGINT" autoIncrement="true">
         <constraints primaryKey="true" nullable="false"/>
       </column>
-      <column name="user_id"      type="BIGINT">
-        <constraints nullable="false" foreignKeyName="fk_audit_user" references="users(id)"/>
+      <column name="user_id" type="BIGINT">
+        <constraints nullable="true"/>
       </column>
       <column name="column_name"  type="VARCHAR(50)"/>
       <column name="before_value" type="VARCHAR(255)"/>
       <column name="after_value"  type="VARCHAR(255)"/>
       <column name="created_at"   type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
     </createTable>
+    <addForeignKeyConstraint
+        baseTableName="audit"
+        baseColumnNames="user_id"
+        referencedTableName="users"
+        referencedColumnNames="id"
+        constraintName="fk_audit_user"
+        onDelete="SET NULL"/>
+  </changeSet>
+
+  <!-- 2. 如果之前跑過「NOT NULL + RESTRICT」版，先移掉 NOT NULL -->
+  <changeSet id="20250507-2-drop-not-null" author="bro">
+    <preConditions onFail="MARK_RAN">
+      <columnExists tableName="audit" columnName="user_id"/>
+      <not>
+        <sqlCheck expectedResult="YES">
+          SELECT is_nullable
+            FROM information_schema.columns
+           WHERE table_name='audit' AND column_name='user_id'
+        </sqlCheck>
+      </not>
+    </preConditions>
+    <dropNotNullConstraint
+      tableName="audit"
+      columnName="user_id"
+      columnDataType="BIGINT"/>
+  </changeSet>
+
+  <!-- 3. 拆掉舊 FK -->
+  <changeSet id="20250507-3-drop-old-fk" author="bro">
+    <preConditions onFail="MARK_RAN">
+      <foreignKeyConstraintExists foreignKeyName="fk_audit_user"/>
+      <!-- 確認目前 onDelete 不是 SET NULL -->
+      <sqlCheck expectedResult="r">
+        SELECT confdeltype
+          FROM pg_constraint
+         WHERE conname='fk_audit_user'
+      </sqlCheck>
+    </preConditions>
+    <dropForeignKeyConstraint
+      baseTableName="audit"
+      constraintName="fk_audit_user"/>
+  </changeSet>
+
+  <!-- 4. add new FK only if it’s not there yet -->
+  <changeSet id="20250507-4-add-fk-set-null" author="bro">
+    <preConditions onFail="MARK_RAN">
+      <not>
+        <foreignKeyConstraintExists foreignKeyName="fk_audit_user"/>
+      </not>
+    </preConditions>
+    <addForeignKeyConstraint
+        baseTableName="audit"
+        baseColumnNames="user_id"
+        referencedTableName="users"
+        referencedColumnNames="id"
+        constraintName="fk_audit_user"
+        onDelete="SET NULL"/>
   </changeSet>
 
 </databaseChangeLog>
-
-
